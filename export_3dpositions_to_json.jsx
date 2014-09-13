@@ -15,7 +15,7 @@ function getAndWriteData(comp, layer)
         file.writeln('');
         file.writeln('Based on the exporter by Thomas Apodaca https://github.com/tmaybe */');
         file.writeln('');
-        file.writeln('{');
+        file.writeln('{"targets":[');
         
         for(var i = 1; i<=numEffects; i++){
             
@@ -26,14 +26,17 @@ function getAndWriteData(comp, layer)
             var pZ = effectLayer.property("Position Z").value;
             var rX = effectLayer.property("Rotation XY").value[0];
             var rY = effectLayer.property("Rotation XY").value[1];
-            var rZ = effectLayer.property("RotationZ").value;
+            var rZ = effectLayer.property("Rotation Z").value;
                         
             if(pX != null && pY != null && pZ != null && rX != null && rY != null && rZ != null){
-                    file.writeln('{name:"'+name+'",x:'+pX+',y:'+pY+',z:'+pZ+',rotationX:'+rX+',rotationY:'+rY+',rotationZ:'+rZ+'},');
+                var jsonObject = '{"name":"'+name+'","x":'+pX+',"y":'+pY+',"z":'+pZ+',"rotationX":'+rX+',"rotationY":'+rY+',"rotationZ":'+rZ+'}';
+                if(i < numEffects) jsonObject += ',';
+            
+                    file.writeln(jsonObject);
             }
             
         }
-        file.writeln('}');
+        file.writeln(']}');
 		file.close();
 	}
     
