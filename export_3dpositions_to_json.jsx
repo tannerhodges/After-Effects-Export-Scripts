@@ -1,3 +1,8 @@
+/* TODO 
+// trouver un moyen de chopper le nom interne des custom controls (MatchName ?) pour pouvoir filtrer efficacement les effets ajoutés.
+
+*/
+
 
 function getAndWriteData(comp, layer)
 {
@@ -17,25 +22,40 @@ function getAndWriteData(comp, layer)
         file.writeln('');
         file.writeln('{"targets":[');
         
-        for(var i = 1; i<=numEffects; i++){
-            
-            var effectLayer = layer.Effects.property(i);
-            var name = effectLayer.name;
-            var pX = effectLayer.property("Position XY").value[0];
-            var pY = effectLayer.property("Position XY").value[1];
-            var pZ = effectLayer.property("Position Z").value;
-            var rX = effectLayer.property("Rotation XY").value[0];
-            var rY = effectLayer.property("Rotation XY").value[1];
-            var rZ = effectLayer.property("Rotation Z").value;
-                        
-            if(pX != null && pY != null && pZ != null && rX != null && rY != null && rZ != null){
-                var jsonObject = '{"name":"'+name+'","x":'+pX+',"y":'+pY+',"z":'+pZ+',"rotationX":'+rX+',"rotationY":'+rY+',"rotationZ":'+rZ+'}';
-                if(i < numEffects) jsonObject += ',';
-            
-                    file.writeln(jsonObject);
+        var effectLayer;
+        var matchName;
+        
+        var listTransformEffectsToExport = [];
+        var i;
+        
+        for(i = 1; i<=numEffects; i++){
+            effectLayer = layer.Effects.property(i);
+            matchName = effectLayer.matchName;
+            if(matchName == "Transform_P-RZ-RY-RX" && effectLayer.property("Export").value == 1){
+                listTransformEffectsToExport.push(effectLayer);
             }
-            
         }
+        
+        for(i = 0; i<listTransformEffectsToExport.length; i++){         
+                var control = listTransformEffectsToExport[i];
+                
+                var name = control.name;
+                var pX = control.property("Position XY").value[0];
+                var pY = control.property("Position XY").value[1];
+                var pZ = control.property("Position Z").value;
+                var rX = control.property("Rotation XY").value[0];
+                var rY = control.property("Rotation XY").value[1];
+                var rZ = control.property("Rotation Z").value;
+                
+                var jsonObject = '{"name":"'+name+'","x":'+pX+',"y":'+pY+',"z":'+pZ+',"rotationX":'+rX+',"rotationY":'+rY+',"rotationZ":'+rZ+'}';
+                    
+                if(i < listTransformEffectsToExport.length-1){
+                    jsonObject += ',';
+                }
+
+                file.writeln(jsonObject);
+        }
+            
         file.writeln(']}');
 		file.close();
 	}
