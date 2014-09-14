@@ -1,9 +1,3 @@
-/* TODO 
-// trouver un moyen de chopper le nom interne des custom controls (MatchName ?) pour pouvoir filtrer efficacement les effets ajoutés.
-
-*/
-
-
 function getAndWriteData(comp, layer)
 {
 	
@@ -27,6 +21,7 @@ function getAndWriteData(comp, layer)
         
         var listTransformEffectsToExport = [];
         var i;
+        var nbrTargetExported = 0;
         
         for(i = 1; i<=numEffects; i++){
             effectLayer = layer.Effects.property(i);
@@ -54,13 +49,15 @@ function getAndWriteData(comp, layer)
                 }
 
                 file.writeln(jsonObject);
+                nbrTargetExported ++;
         }
             
         file.writeln(']}');
 		file.close();
 	}
     
-    alert("Export complete");
+    var stringTarget = nbrTargetExported  > 1 ? "targets" : "target";    
+    alert(nbrTargetExported + " " +stringTarget+ " exported successfully.");
 }
 
 var comp = app.project.activeItem;
